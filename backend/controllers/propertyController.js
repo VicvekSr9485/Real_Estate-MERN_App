@@ -32,13 +32,14 @@ propertyController.get('/find', async (req, res) => {
     let properties = []
     try {
         if (type) {
-            properties = await Property.find(type).populate("currentOwner", '-password')
-            return res.status(200).json(properties)
+            properties = await Property.find(type).populate("owner", '-password')
         } else {
-            return res.status(500).json({msg: "No such type"})
+            properties = await Property.find({})
         }
+
+        return res.status(200).json(properties)
     } catch (error) {
-        return res.status(500).json(error.message)
+        return res.status(500).json(error)
     }
 })
 
@@ -149,26 +150,20 @@ propertyController.put('/bookmark/:id', verifyToken, async (req, res) => {
     }
 })
 
+// delete estate
 propertyController.delete('/:id', verifyToken, async (req, res) => {
     try {
-        const property = await Property.findById(req.params.id);
-        
-        if (!property) {
-            return res.status(404).json({ error: "Property not found" });
-        }
-
+        const property = await Property.findById(req.params.id)
         if (property.currentOwner.toString() !== req.user.id) {
-            return res.status(403).json({ error: "You are not allowed to delete other people's properties" });
+            throw new Error("You are not allowed to delete other people properties")
         }
 
-        await Property.deleteOne({ _id: req.params.id });
+        await property.delete()
 
-        return res.status(200).json({ msg: "Successfully deleted property" });
+        return res.status(200).json({ msg: "Successfully deleted property" })
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json(error)
     }
-});
-
+})
 
 module.exports = propertyController
