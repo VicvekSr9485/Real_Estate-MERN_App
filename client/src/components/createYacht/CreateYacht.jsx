@@ -7,12 +7,12 @@ import { request } from '../../util/fetchAPI'
 import classes from './createYacht.module.css'
 
 const CreateYacht = () => {
-    const [title, setTitle] = useState(null)
-    const [desc, setDesc] = useState(null)
-    const [price, setPrice] = useState(null)
-    const [maxPassengers, setMaxPassengers] = useState(null)
-    const [location, setLocation] = useState(null)
-    const [metersLong, setMetersLong] = useState(null)
+    const [title, setTitle] = useState("")
+    const [desc, setDesc] = useState("")
+    const [price, setPrice] = useState(0)
+    const [maxPassengers, setMaxPassengers] = useState(0)
+    const [location, setLocation] = useState("")
+    const [metersLong, setMetersLong] = useState(0)
     const [photo, setPhoto] = useState(null)
     const [error, setError] = useState(false)
     const [emptyFields, setEmptyFields] = useState(false)
@@ -117,6 +117,7 @@ const CreateYacht = () => {
                 {error && (
                     <div className={classes.error}>
                         There was an error creating a listing! Try again.
+                        {console.log(error.message)}
                     </div>
                 )}
                 {emptyFields && (
